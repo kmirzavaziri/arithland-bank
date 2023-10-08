@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head %}
+{#    <meta http-equiv="refresh" content="5; URL={% url "teams" %}">#}
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card mb-3">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Rank</th>
+                    <th scope="col">Team Number</th>
+                    <th scope="col">Balance</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for team in teams %}
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <th scope="row">{{ team.team_number }}</th>
+                        <td>{{ team.balance }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock content %}

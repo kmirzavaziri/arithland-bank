@@ -1,0 +1,33 @@
+{% extends "form.html" %}
+
+{% load filters %}
+
+{% block after_form %}
+<div class="col-md-6">
+    <div class="card">
+        <div class="card-header">Recent Transactions</div>
+        <div class="card-body">
+            {% for t in recent_transactions %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <span class="fw-bold">Team {{ t.team.team_number }}</span>
+                    <span
+                            class="font-monospace text-{% if t.amount > 0 %}success{% else %}danger{% endif %}"
+                    >
+                        {% if t.amount > 0 %}+{% endif %}{{ t.amount }}
+                    </span>
+                    <span class="font-monospace text-muted">({{ t.balance }})</span>
+                    <span class="badge bg-dark">
+                        by {{ t.recorded_by.username | default:"system" }}
+                        at {{ t.recorded_at | format_hhmmss }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {{ t.description|linebreaks }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

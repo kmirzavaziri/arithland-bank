@@ -1,0 +1,106 @@
+{% load static %}
+{% load django_bootstrap5 %}
+{% load filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    {% endblock %}
+    <title>
+        {% block title %}
+            {% for item in base.menu %}
+                {% if request.resolver_match.url_name == item.name %}{{ item.display }}{% endif %}
+            {% endfor %}
+            | Arithland Bank
+        {% endblock %}
+    </title>
+    <link href="{% static 'assets/css/lib/cdn.jsdelivr.net_npm_bootstrap@5.2.3_dist_css_bootstrap.min.css' %}" rel="stylesheet">
+    <style>
+        {# TODO move this style to a css file #}
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-attachment: fixed;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        @media print {
+            body {
+                zoom: 63%;
+            }
+
+            .container {
+                min-width: calc(100% - 80px);
+            }
+
+            .ab-screen-only {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+{% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light ab-screen-only">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">
+            <img src="{% static 'assets/img/logo.png' %}" width="30" height="30" class="d-inline-block align-top mx-3"
+                 alt="">
+            Arithland Bank
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-nav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-nav">
+            <ul class="navbar-nav">
+                {% for item in base.menu %}
+                    <li class="nav-item">
+                        <a
+                                class="nav-link {% if request.resolver_match.url_name == item.name %}active{% endif %}"
+                                href="{% url item.name %}"
+                        >{{ item.display }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div>
+            <span class="text-muted font-monospace">
+                {% if base.competition.current_time is not none %}
+                    <span id="navbar-time" data-current-time={{ base.competition.current_time }}>
+                        {{ base.competition.current_time | format_hhmmss }}
+                    </span>
+                {% else %}
+                    no competition
+                {% endif %}
+                - {{ user.username }}
+            </span>
+            <form action="{% url "logout" %}" method="post" class="form-inline my-2 my-lg-0 d-inline">
+                {% csrf_token %}
+                <button class="btn btn-outline-info mx-2" type="submit">Logout</button>
+            </form>
+        </div>
+    </nav>
+{% endif %}
+{% block content %}{% endblock %}
+<script>
+    const arithlandBank = {
+        csrfToken: "{{ csrf_token }}",
+    };
+</script>
+<script src="{% static 'assets/js/lib/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'assets/js/lib/cdn.jsdelivr.net_npm_bootstrap@5.2.3_dist_js_bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'assets/js/base.js' %}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

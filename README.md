@@ -8,6 +8,12 @@ Migrate the database.
 python3 manage.py migrate
 ```
 
+Create a super user.
+
+```shell
+python3 manage.py createsuperuser
+```
+
 Run the server.
 
 ```shell

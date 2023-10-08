@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+{% load filters %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card mb-3 col-5 ab-screen-only">
+            <div class="card-header fw-bold">Transactions</div>
+            <div class="card-body">
+                {% bootstrap_messages %}
+                <form>
+                    {% bootstrap_form form layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                    {% bootstrap_button button_type="submit" content="Search" %}
+                </form>
+            </div>
+        </div>
+        {% for t in transactions %}
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="fw-bold">Team {{ t.team.team_number }}</span>
+                        <span
+                                class="font-monospace text-{% if t.amount > 0 %}success{% else %}danger{% endif %}"
+                        >
+                        {% if t.amount > 0 %}+{% endif %}{{ t.amount }}
+                    </span>
+                        <span class="font-monospace text-muted">({{ t.balance }})</span>
+                    </div>
+                    <span class="badge bg-dark">
+                        by {{ t.recorded_by.username | default:"system" }}
+                        at {{ t.recorded_at | format_hhmmss }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    {{ t.description|linebreaks }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

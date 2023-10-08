@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center d-flex">
+            {% block before_form %}
+            {% endblock %}
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">{{ ui.title }}</div>
+                    <div class="card-body">
+                    {% bootstrap_messages %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {% bootstrap_form form layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
+                            {% bootstrap_button button_type="submit" content=ui.submit_button.text %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% block after_form %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock content %}
+
+{% block scripts %}
+    {{ form.media }}
+{% endblock %}
