@@ -141,7 +141,7 @@ SCHEDULER_CONFIG = {
 
 class ARITHLAND:
     interest_range_length = 10 * 60
-    competition_length = 1.5 * 60 * 60
+    competition_length = 90 * 60  # 90 minutes
     period_count = 3
 
     base_easy_sell = 100

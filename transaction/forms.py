@@ -7,53 +7,57 @@ from . import models, transaction, widgets, competition
 
 
 class TransactionForm(forms.Form):
-    team_number = forms.IntegerField(required=True)
+    team_number = forms.IntegerField(
+        required=True,
+        widget=forms.NumberInput(attrs={'placeholder': 'شماره تیم'}),
+    )
     team_balance = forms.Field(
         required=False,
-        widget=widgets.RequestWidget(target_input='team_number', endpoint=reverse_lazy('teams__get_balance_by_number'))
+        widget=widgets.RequestWidget(target_input='team_number', endpoint=reverse_lazy('teams__get_balance_by_number')),
     )
     amount = forms.IntegerField(
         required=False,
+        widget=forms.NumberInput(attrs={'placeholder': 'مقدار'}),
     )
     solved_easy = forms.IntegerField(
         min_value=0,
         required=False,
         label='SE',
-        widget=forms.NumberInput(attrs={'placeholder': 'Number Of Solved Easy Problems'})
+        widget=forms.NumberInput(attrs={'placeholder': 'ساده حل‌شده'}),
     )
     solved_medium = forms.IntegerField(
         min_value=0,
         required=False,
         label='SM',
-        widget=forms.NumberInput(attrs={'placeholder': 'Number Of Solved Medium Problems'})
+        widget=forms.NumberInput(attrs={'placeholder': 'متوسط حل‌شده'}),
     )
     solved_hard = forms.IntegerField(
         min_value=0,
         required=False,
         label='SH',
-        widget=forms.NumberInput(attrs={'placeholder': 'Number Of Solved Hard Problems'})
+        widget=forms.NumberInput(attrs={'placeholder': 'سخت حل‌شده'}),
     )
     easy = forms.IntegerField(
         min_value=0,
         required=False,
         label='E',
-        widget=forms.NumberInput(attrs={'placeholder': 'Number Of Easy Problems'})
+        widget=forms.NumberInput(attrs={'placeholder': 'ساده حل‌نشده'}),
     )
     medium = forms.IntegerField(
         min_value=0,
         required=False,
         label='M',
-        widget=forms.NumberInput(attrs={'placeholder': 'Number Of Medium Problems'})
+        widget=forms.NumberInput(attrs={'placeholder': 'متوسط حل‌نشده'}),
     )
     hard = forms.IntegerField(
         min_value=0,
         required=False,
         label='H',
-        widget=forms.NumberInput(attrs={'placeholder': 'Number Of Hard Problems'})
+        widget=forms.NumberInput(attrs={'placeholder': 'سخت حل‌نشده'}),
     )
     sum_amount = forms.Field(
         required=False,
-        widget=widgets.SumWidget()
+        widget=widgets.SumWidget(),
     )
 
     def __init__(self, *args, **kwargs):

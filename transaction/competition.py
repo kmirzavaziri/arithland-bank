@@ -42,4 +42,4 @@ def get_current_time():
 
 
 def is_near_end():
-    return get_current_time() >= (1 - 1 / (2 * settings.ARITHLAND.period_count)) * settings.ARITHLAND.competition_length
+    return get_current_time() is not None and get_current_time() >= (1 - 1 / (2 * settings.ARITHLAND.period_count)) * settings.ARITHLAND.competition_length
