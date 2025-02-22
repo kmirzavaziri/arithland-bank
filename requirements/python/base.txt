@@ -1,0 +1,7 @@
+Django==4.2.9
+django-bootstrap5==23.3
+schedule==1.2.1
+django-jazzmin==3.0.1
+pytz==2025.1
+types-pytz==2025.1.0.20250204
+reportlab==4.3.1

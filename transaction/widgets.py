@@ -16,7 +16,7 @@ class SumWidget(Widget):
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
-        context['widget']['target_inputs'] = json.dumps(self.target_inputs)
+        context["widget"]["target_inputs"] = json.dumps(self.target_inputs)
         return context
 
 
@@ -33,6 +33,6 @@ class RequestWidget(Widget):
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
-        context['widget']['target_input'] = self.target_input
-        context['widget']['endpoint'] = self.endpoint
+        context["widget"]["target_input"] = self.target_input
+        context["widget"]["endpoint"] = self.endpoint
         return context

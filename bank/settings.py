@@ -9,10 +9,15 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 import os
+from dataclasses import asdict
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 import schedule
+from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,11 +31,12 @@ SECRET_KEY = "django-insecure-8zasv5xgic@lcok%1wz1gmf8rjwy#6&)=(gotu5fuc5ehc@k-0
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -50,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "transaction.middlewares.TimezoneMiddleware",
 ]
 
 ROOT_URLCONF = "bank.urls"
@@ -57,8 +64,7 @@ ROOT_URLCONF = "bank.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates']
-        ,
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -119,7 +125,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, "static"),
 ]
 
 # Default primary key field type
@@ -128,26 +134,68 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SCHEDULER_CONFIG = {
-    'jobs': {
-        'my_task': {
-            'function': 'transactions.tasks.add_interests',
-            'args': [],
-            'kwargs': {},
-            'trigger': schedule.every(10).seconds,
+    "jobs": {
+        "my_task": {
+            "function": "transactions.tasks.add_interests",
+            "args": [],
+            "kwargs": {},
+            "trigger": schedule.every(10).seconds,
         },
     }
 }
 
+AUTH_USER_MODEL = "transaction.User"
 
-class ARITHLAND:
-    interest_range_length = 10 * 60
-    competition_length = 90 * 60  # 90 minutes
-    period_count = 3
+ADMIN_SITE_HEADER = "Arithland Bank"
+ADMIN_SITE_TITLE = "Arithland Bank"
+ADMIN_INDEX_TITLE = "Admin"
 
-    base_easy_sell = 100
-    base_medium_sell = 300
-    base_hard_sell = 500
 
-    base_easy_buy = 300 / 4
-    base_medium_buy = 500 / 4
-    base_hard_buy = 800 / 4
+@dataclass
+class MenuItem:
+    name: str
+    url: str
+    icon: Optional[str] = None
+
+
+MENU_COMMON = [
+    MenuItem("Dashboard", reverse_lazy("dashboard"), "fas fa-home"),
+    MenuItem("Teams", reverse_lazy("teams"), "fas fa-link"),
+]
+
+MENU_ADMIN = [
+    *MENU_COMMON,
+    MenuItem("Transactions", reverse_lazy("transactions")),
+    MenuItem("Admin", reverse_lazy("admin:index")),
+]
+
+JAZZMIN_SETTINGS = {
+    "site_logo": "assets/img/logo.png",
+    "topmenu_links": [asdict(item) for item in MENU_ADMIN],
+    "show_sidebar": False,
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "formatters": {
+        "simple": {
+            "format": "[{asctime}] {levelname} {name}: {message}",
+            "style": "{",
+        },
+    },
+    "loggers": {
+        "transaction": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}

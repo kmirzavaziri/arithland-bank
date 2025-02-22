@@ -14,29 +14,7 @@
                             onsubmit="return confirm('Doing this result in destroying all data from last competition, are you sure?');"
                     >
                         {% csrf_token %}
-                        {% bootstrap_form start_form layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
-                        <input
-                                class="btn btn-info mx-2"
-                                type="submit"
-                                name="start_competition"
-                                value="Start"
-                                {% if base.competition.current_time is not none %}disabled{% endif %}
-                        >
-                    </form>
-                    <hr>
-                    <form
-                            action="{% url "manage" %}"
-                            method="post"
-                            onsubmit="return confirm('This action is not undoable, are you sure?');"
-                    >
-                        {% csrf_token %}
-                        <input
-                                class="btn btn-warning mx-2"
-                                type="submit"
-                                name="finish_competition"
-                                value="Finish"
-                                {% if base.competition.current_time is none %}disabled{% endif %}
-                        >
+                        {% bootstrap_form form layout="horizontal" horizontal_label_class="col-md-4" horizontal_field_class="col-md-8" %}
                     </form>
                 </div>
             </div>

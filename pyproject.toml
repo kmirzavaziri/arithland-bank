@@ -1,0 +1,14 @@
+[tool.black]
+line-length = 120
+exclude = '''
+/(
+    \.venv|
+    migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+skip = [".venv", "migrations"]
+multi_line_output = 3
+force_single_line = true

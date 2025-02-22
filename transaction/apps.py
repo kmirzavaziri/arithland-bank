@@ -10,5 +10,8 @@ class TransactionConfig(AppConfig):
     def ready(self):
         from . import tasks
 
-        if os.environ.get('RUN_MAIN', None) != 'true':
+        if os.environ.get("RUN_MAIN", None) != "true":
             tasks.start_scheduler()
+
+
+# TODO add refund option (rollback or whatever)

@@ -1,23 +1,21 @@
-import json
-
 from django.core.exceptions import ValidationError
 
-from bank import settings
-from . import models, competition
+from transaction import models
+from transaction.models import Team
 
 
 def perform_transaction(
-        user,
-        team_number: int,
-        amount: int,
-        easy: int,
-        medium: int,
-        hard: int,
-        solved_easy: int,
-        solved_medium: int,
-        solved_hard: int,
+    user,
+    team_number: int,
+    amount: int,
+    easy: int,
+    medium: int,
+    hard: int,
+    solved_easy: int,
+    solved_medium: int,
+    solved_hard: int,
 ):
-    sum_amount = calculate_amount(
+    sum_amount = user.competition.calculate_amount(
         amount=amount,
         easy=easy,
         medium=medium,
@@ -30,7 +28,7 @@ def perform_transaction(
     try:
         team = models.Team.objects.get(team_number=team_number)
     except models.Team.DoesNotExist:
-        raise ValidationError({'team_number': f'team number {team_number} does not exist'})
+        raise ValidationError({"team_number": f"team number {team_number} does not exist"})
 
     # todo concurrency safe
     team.balance += sum_amount
@@ -78,30 +76,23 @@ def perform_transaction(
     description_lines = []
 
     if len(deposit_items) != 0:
-        description_lines.append('deposit ' + ", ".join(deposit_items))
+        description_lines.append("deposit " + ", ".join(deposit_items))
 
     if len(withdraw_items) != 0:
-        description_lines.append('withdraw ' + ", ".join(withdraw_items))
+        description_lines.append("withdraw " + ", ".join(withdraw_items))
 
     models.Transaction(
         team=team,
         amount=sum_amount,
         balance=team.balance,
         recorded_by=user,
-        recorded_at=competition.get_current_time() or settings.ARITHLAND.competition_length + 1,
-        description='\n'.join(description_lines),
+        recorded_at=team.competition.get_current_time(),
+        description="\n".join(description_lines),
         is_for_interest=False,
     ).save()
 
 
-def add_interest(
-        team_number: int,
-):
-    try:
-        team = models.Team.objects.get(team_number=team_number)
-    except models.Team.DoesNotExist:
-        raise ValidationError({'team_number': f'team number {team_number} does not exist'})
-
+def add_interest(team: Team):
     amount = 0.1 * team.balance
 
     # todo concurrency safe
@@ -114,76 +105,7 @@ def add_interest(
         amount=amount,
         balance=team.balance,
         recorded_by=None,
-        recorded_at=competition.get_current_time() or settings.ARITHLAND.competition_length + 1,
+        recorded_at=team.competition.get_current_time(),
         description="deposit interest",
         is_for_interest=True,
     ).save()
-
-
-def calculate_amount(
-        amount: int,
-        easy: int,
-        medium: int,
-        hard: int,
-        solved_easy: int,
-        solved_medium: int,
-        solved_hard: int,
-) -> int:
-    # change prices for unsolved problems
-    easy_price = get_easy_price()
-    medium_price = get_medium_price()
-    hard_price = get_hard_price()
-    solved_easy_price = get_solved_easy_price()
-    solved_medium_price = get_solved_medium_price()
-    solved_hard_price = get_solved_hard_price()
-
-    return (
-            amount +
-            easy * easy_price + medium * medium_price + hard * hard_price +
-            solved_easy * solved_easy_price + solved_medium * solved_medium_price + solved_hard * solved_hard_price
-    )
-
-
-def get_period():
-    current_time = competition.get_current_time()
-
-    if current_time is None:
-        return 0
-
-    period_length = settings.ARITHLAND.competition_length / settings.ARITHLAND.period_count
-
-    if current_time < period_length:
-        return 0
-
-    if current_time < 2 * period_length:
-        return 1
-
-    return 2
-
-
-def get_easy_price():
-    return settings.ARITHLAND.base_easy_buy * (2 ** get_period())
-
-
-def get_medium_price():
-    return settings.ARITHLAND.base_medium_buy * (2 ** get_period())
-
-
-def get_hard_price():
-    return settings.ARITHLAND.base_hard_buy * (2 ** get_period())
-
-
-def get_solved_easy_price():
-    return 2 * settings.ARITHLAND.base_easy_sell * (2 ** get_period())
-
-
-def get_solved_medium_price():
-    return 2 * settings.ARITHLAND.base_medium_sell * (2 ** get_period())
-
-
-def get_solved_hard_price():
-    return 2 * settings.ARITHLAND.base_hard_sell * (2 ** get_period())
-
-
-def calculate_max_loan(balance: int) -> int:
-    return 2 * balance

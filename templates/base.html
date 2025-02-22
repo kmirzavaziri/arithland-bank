@@ -10,17 +10,41 @@
     <title>
         {% block title %}
             {% for item in base.menu %}
-                {% if request.resolver_match.url_name == item.name %}{{ item.display }}{% endif %}
+                {% if request|matches:item %}{{ item.name }}{% endif %}
             {% endfor %}
             | Arithland Bank
         {% endblock %}
     </title>
-    <link href="{% static 'assets/css/lib/cdn.jsdelivr.net_npm_bootstrap@5.2.3_dist_css_bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <link href="{% static 'assets/css/lib/cdn.jsdelivr.net_npm_bootstrap@5.2.3_dist_css_bootstrap.min.css' %}"
+          rel="stylesheet">
     <style>
         {# TODO move this style to a css file #}
         body {
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-attachment: fixed;
+            font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        }
+
+        .navbar {
+            padding: .5rem 2rem;
+        }
+
+        .navbar-brand {
+            display: inline-block;
+            padding-top: .3125rem;
+            padding-bottom: .3125rem;
+            margin-right: .5rem;
+            font-size: 1.25rem;
+            line-height: inherit;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 992px) {
+            .navbar-expand-lg .navbar-nav .nav-link {
+                padding-right: 1rem;
+                padding-left: 1rem;
+            }
         }
 
         @keyframes gradient {
@@ -48,49 +72,21 @@
                 display: none !important;
             }
         }
+
+        .ab-competition-details {
+            cursor: pointer;
+            display: inline;
+        }
+
+        .ab-competition-selection {
+            display: inline;
+            width: auto;
+        }
     </style>
 </head>
 <body>
 {% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light ab-screen-only">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">
-            <img src="{% static 'assets/img/logo.png' %}" width="30" height="30" class="d-inline-block align-top mx-3"
-                 alt="">
-            Arithland Bank
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-nav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar-nav">
-            <ul class="navbar-nav">
-                {% for item in base.menu %}
-                    <li class="nav-item">
-                        <a
-                                class="nav-link {% if request.resolver_match.url_name == item.name %}active{% endif %}"
-                                href="{% url item.name %}"
-                        >{{ item.display }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div>
-            <span class="text-muted font-monospace">
-                {% if base.competition.current_time is not none %}
-                    <span id="navbar-time" data-current-time={{ base.competition.current_time }}>
-                        {{ base.competition.current_time | format_hhmmss }}
-                    </span>
-                {% else %}
-                    no competition
-                {% endif %}
-                - {{ user.username }}
-            </span>
-            <form action="{% url "logout" %}" method="post" class="form-inline my-2 my-lg-0 d-inline">
-                {% csrf_token %}
-                <button class="btn btn-outline-info mx-2" type="submit">Logout</button>
-            </form>
-        </div>
-    </nav>
+    {% include 'includes/navbar.html' %}
 {% endif %}
 {% block content %}{% endblock %}
 <script>
