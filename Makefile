@@ -43,3 +43,17 @@ test: test-deps
 .PHONY: up
 up:
 	./manage.py runserver
+
+
+.PHONY: ansible-instance
+ansible-instance:
+	ansible-playbook -i ansible/inventory.ini ansible/setup_instance.yaml
+
+.PHONY: ansible-nginx
+ansible-nginx:
+	ansible-playbook -i ansible/inventory.ini ansible/deploy_nginx.yaml
+
+.PHONY: ansible-app
+ansible-app:
+	set -o allexport; source production.env; set +o allexport; \
+	ansible-playbook -i ansible/inventory.ini ansible/deploy_app.yaml
