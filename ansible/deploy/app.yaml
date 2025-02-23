@@ -1,0 +1,42 @@
+- name: Deploy Arithland Bank Service
+  hosts: all
+  become: true
+  environment:
+    DJANGO_SECRET_KEY: "{{ lookup('env', 'DJANGO_SECRET_KEY') }}"
+    DJANGO_DEBUG: "{{ lookup('env', 'DJANGO_DEBUG') }}"
+    DB_HOST: "{{ lookup('env', 'DB_HOST') }}"
+    DB_PORT: "{{ lookup('env', 'DB_PORT') }}"
+    DB_NAME: "{{ lookup('env', 'DB_NAME') }}"
+    DB_USER: "{{ lookup('env', 'DB_USER') }}"
+    DB_PASS: "{{ lookup('env', 'DB_PASS') }}"
+  tasks:
+    - name: Ensure project directory exists
+      file:
+        path: /var/www/html/arithland_bank/staticfiles
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Ensure staticfiles directory exists
+      file:
+        path: /home/ubuntu/arithland_bank
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+
+    - name: Clone repository
+      git:
+        repo: 'https://github.com/kmirzavaziri/arithland-bank.git'
+        dest: /home/ubuntu/arithland_bank
+        version: main
+        force: yes
+
+    - name: Build and start containers (force recreate)
+      community.docker.docker_compose_v2:
+        project_src: /home/ubuntu/arithland_bank
+        build: always
+        recreate: always
+        remove_orphans: true
+        state: present

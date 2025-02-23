@@ -1,0 +1,10 @@
+- name: Apply geerlingguy.docker role
+  ansible.builtin.include_role:
+    name: geerlingguy.docker
+  vars:
+    docker_edition: ce
+    docker_version: "latest"
+    docker_install_compose: true
+    docker_compose_version: v2.35.1
+    docker_users:
+      - "{{ ansible_user | default('ubuntu') }}"

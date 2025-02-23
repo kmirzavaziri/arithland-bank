@@ -1,0 +1,17 @@
+- name: Deploy Nginx configuration
+  hosts: all
+  become: yes
+  tasks:
+    - name: Copy Nginx configuration file
+      copy:
+        src: files/nginx.conf
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Restart Nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: yes

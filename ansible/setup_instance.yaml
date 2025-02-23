@@ -1,0 +1,7 @@
+- name: Setup Instance
+  hosts: server
+  become: yes
+  tasks:
+    - import_tasks: install/docker.yaml
+    - import_tasks: install/git.yaml
+    - import_tasks: install/nginx.yaml

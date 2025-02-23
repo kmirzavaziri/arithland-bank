@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:13
+    container_name: arithland_bank_db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - arithland_bank_db_data:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+
+  service:
+    build: .
+    container_name: arithland_bank_service
+    restart: always
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DJANGO_DEBUG: ${DJANGO_DEBUG}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/www/html/arithland_bank/static:/app/staticfiles
+
+volumes:
+  arithland_bank_db_data:

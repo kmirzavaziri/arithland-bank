@@ -74,3 +74,19 @@
 9. Find your machine's local IP, and share with other machines in the same network,
     they can access it using the address `THE_IP:8000`. (You might need to disable the
     firewall on the server machine.)
+
+## Steps to deploy
+
+```
+make init-ansible
+make ansible-instance
+```
+
+And then trigger deploy pipeline.
+
+## Known Issues
+
+### To Do List
+
+- team card background
+- add revert transaction functionality

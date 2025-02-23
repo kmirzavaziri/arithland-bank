@@ -43,3 +43,21 @@ test: test-deps
 .PHONY: up
 up:
 	./manage.py runserver
+
+.PHONY: init-ansible
+init-ansible:
+	ansible-galaxy collection install community.docker --force
+	ansible-galaxy install geerlingguy.docker
+
+.PHONY: ansible-instance
+ansible-instance:
+	ansible-playbook -i ansible/inventory.ini ansible/setup_instance.yaml
+
+.PHONY: ansible-nginx
+ansible-nginx:
+	ansible-playbook -i ansible/inventory.ini ansible/deploy/nginx.yaml
+
+.PHONY: ansible-app
+ansible-app:
+	set -o allexport; source production.env; set +o allexport; \
+	ansible-playbook -i ansible/inventory.ini ansible/deploy/app.yaml
