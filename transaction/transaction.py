@@ -1,12 +1,10 @@
-from django.core.exceptions import ValidationError
-
 from transaction import models
 from transaction.models import Team
 
 
 def perform_transaction(
     user,
-    team_number: int,
+    team: Team,
     amount: int,
     easy: int,
     medium: int,
@@ -24,11 +22,6 @@ def perform_transaction(
         solved_medium=solved_medium,
         solved_hard=solved_hard,
     )
-
-    try:
-        team = models.Team.objects.get(team_number=team_number)
-    except models.Team.DoesNotExist:
-        raise ValidationError({"team_number": f"team number {team_number} does not exist"})
 
     # todo concurrency safe
     team.balance += sum_amount

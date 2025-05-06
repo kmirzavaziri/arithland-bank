@@ -84,7 +84,10 @@ def dashboard_view(request):
             # TODO prompt when doing loan
             perform_transaction(
                 user=request.user,
-                team_number=form.cleaned_data["team_number"],
+                team=Team.objects.get(
+                    competition_id=request.user.competition_id,
+                    team_number=form.cleaned_data["team_number"],
+                ),
                 amount=form.cleaned_data.get("amount") or 0,
                 easy=form.cleaned_data.get("easy") or 0,
                 medium=form.cleaned_data.get("medium") or 0,
