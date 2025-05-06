@@ -79,7 +79,7 @@ def dashboard_view(request):
     recent_transactions = Transaction.objects.filter(recorded_by=request.user).order_by("-id")[:4]
 
     if request.method == "POST":
-        form = TransactionForm(request.POST)
+        form = TransactionForm(request.POST, request=request)
         if form.is_valid():
             # TODO prompt when doing loan
             perform_transaction(
@@ -97,7 +97,7 @@ def dashboard_view(request):
                 request,
                 "dashboard.html",
                 {
-                    "form": TransactionForm(),
+                    "form": TransactionForm(request=request),
                     "ui": form_ui,
                     "recent_transactions": recent_transactions,
                 },
@@ -117,7 +117,7 @@ def dashboard_view(request):
         request,
         "dashboard.html",
         {
-            "form": TransactionForm(),
+            "form": TransactionForm(request=request),
             "ui": form_ui,
             "recent_transactions": recent_transactions,
         },

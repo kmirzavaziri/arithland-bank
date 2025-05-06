@@ -12,6 +12,10 @@ User = get_user_model()
 
 
 class TransactionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request", None)
+        super().__init__(*args, **kwargs)
+
     team_number = forms.IntegerField(
         required=True,
         widget=forms.NumberInput(attrs={"placeholder": "شماره تیم"}),
