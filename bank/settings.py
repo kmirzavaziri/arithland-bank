@@ -163,11 +163,16 @@ LOGGING = {
     },
     "formatters": {
         "simple": {
-            "format": "[{asctime}] {levelname} {name}: {message}",
+            "format": "{levelname} {asctime} {module} {message}",
             "style": "{",
         },
     },
     "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
         "transaction": {
             "handlers": ["console"],
             "level": "INFO",
