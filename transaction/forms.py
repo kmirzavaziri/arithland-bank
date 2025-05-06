@@ -71,7 +71,7 @@ class TransactionForm(forms.Form):
         team_number = self.cleaned_data["team_number"]
 
         try:
-            team = Team.objects.get(team_number=team_number)
+            team = Team.objects.get(competition_id=self.request.user.competition_id, team_number=team_number)
         except Team.DoesNotExist:
             raise ValidationError({"team_number": f"team number {team_number} does not exist"})
 

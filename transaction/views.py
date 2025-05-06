@@ -189,7 +189,7 @@ def teams_get_balance_by_number_api_view(request):
         return JsonResponse({"value": ""})
 
     try:
-        team = Team.objects.get(team_number=data["team_number"])
+        team = Team.objects.get(competition_id=request.user.competition_id, team_number=data["team_number"])
     except Team.DoesNotExist:
         return JsonResponse({"value": ""})
 
